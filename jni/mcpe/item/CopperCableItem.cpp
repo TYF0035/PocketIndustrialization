@@ -5,7 +5,7 @@ CopperCableItem* CopperCableItem::itemCopperCable = NULL;
 
 CopperCableItem::CopperCableItem(int id) : Item(id - 256) {
 	setNameID("copperCable");
-	setIcon("apple", 0); //setting it to copper_cable crashes the game; but why?
+	setIcon("copper_cable", 0);
 	setCategory(2);
 };
 
