@@ -69,6 +69,7 @@ static void Item$initCreativeItems() {
 	LOGI("Adding creative items");
 	Item::addCreativeItem(GeneratorTile::tileGenerator, 0);
 	Item::addCreativeItem(TankTile::tileTank, 0);
+	Item::addCreativeItem(CopperCableTile::tileCopperCable, 0);
 	Item::addCreativeItem(CopperCableItem::itemCopperCable, 0);
 	LOGI("Creative items added");
 }
