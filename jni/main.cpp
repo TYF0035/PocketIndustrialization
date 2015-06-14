@@ -68,7 +68,7 @@ static void Item_initCreativeItems_hook() {
 	Item::addCreativeItem(CopperCableTile::tileCopperCable, 0);
 	Item::addCreativeItem(CopperCableTile::tileCopperCable, 1);
 	//Item::addCreativeItem(CopperCableItem::itemCopperCable, 0);
-	//Item::addCreativeItem(InsulatedCopperCableItem::itemInsulatedCopperCable, 0);
+	Item::addCreativeItem(InsulatedCopperCableItem::itemInsulatedCopperCable, 0);
 	LOGI("Creative items added");
 }
 
