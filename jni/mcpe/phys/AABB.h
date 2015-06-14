@@ -32,7 +32,7 @@ public:
 	bool isEmpty() const;
 	bool isNan() const;
 	void merge(const AABB &) const;
-	void move(float, float, float);
+	AABB& move(float, float, float);
 	void set(const AABB &);
 	void set(const Vec3 &, const Vec3 &);
 	void set(float, float, float, float, float, float);

@@ -12,6 +12,7 @@
 #include <mcpe/locale/I18n.h>
 
 #include <mcpe/item/CopperCableItem.h>
+#include <mcpe/item/InsulatedCopperCableItem.h>
 
 #include <mcpe/tile/GeneratorTile.h>
 #include <mcpe/tile/TankTile.h>
@@ -25,23 +26,20 @@
 #define LOG_TAG "PocketIndustrialization"
 #define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__))
 
-//Rendering Code
-static void (*_TileTessellator$tessellateInWorld)(TileTessellator*, Tile*, const TilePos&, bool);
-static void TileTessellator$tessellateInWorld(TileTessellator* self, Tile* tile, const TilePos& pos, bool b) {
+static void (*TileTessellator_tessellateInWorld_real)(TileTessellator*, Tile*, const TilePos&, bool);
+static void TileTessellator_tessellateInWorld_hook(TileTessellator* self, Tile* tile, const TilePos& pos, bool b) {
 	if(!RenderDispatcher::dispatch(tile->id, pos, tile, self))
-		_TileTessellator$tessellateInWorld(self, tile, pos, b);
+		TileTessellator_tessellateInWorld_real(self, tile, pos, b);
 }
 
-//Where The Blocks Get There Renderers
-void initRenderers() {	
+static void initRenderers() {	
 	RenderDispatcher::registerRenderer(TankTile::_id, new TankRenderer());
 	RenderDispatcher::registerRenderer(CopperCableTile::_id, new CableRenderer());
 }
 
-//Where The Tiles Get Added
-static void (*_Tile$initTiles)();
-static void Tile$initTiles() {
-	_Tile$initTiles();    
+static void (*Tile_initTiles_real)();
+static void Tile_initTiles_hook() {
+	Tile_initTiles_real();    
 	LOGI("Adding blocks");
 	GeneratorTile::tileGenerator = new GeneratorTile(GeneratorTile::_id);
 	TankTile::tileTank = new TankTile(TankTile::_id);
@@ -51,46 +49,46 @@ static void Tile$initTiles() {
 	initRenderers();
 }
 
-//Where The Items Get Added
-static void (*_Item$initItems)();
-static void Item$initItems() {
+static void (*Item_initItems_real)();
+static void Item_initItems_hook() {
+	Item_initItems_real();
 	LOGI("Adding items");
 	CopperCableItem::itemCopperCable = new CopperCableItem(CopperCableItem::_id);
+	InsulatedCopperCableItem::itemInsulatedCopperCable = new InsulatedCopperCableItem(InsulatedCopperCableItem::_id);
 	LOGI("Items added");
-
-	_Item$initItems();
 }
 
-//Adds The Blocks To The Creative Inventory
-static void (*_Item$initCreativeItems)();
-static void Item$initCreativeItems() {
-	_Item$initCreativeItems();
+static void (*Item_initCreativeItems_real)();
+static void Item_initCreativeItems_hook() {
+	Item_initCreativeItems_real();
 	
 	LOGI("Adding creative items");
 	Item::addCreativeItem(GeneratorTile::tileGenerator, 0);
 	Item::addCreativeItem(TankTile::tileTank, 0);
 	Item::addCreativeItem(CopperCableTile::tileCopperCable, 0);
-	Item::addCreativeItem(CopperCableItem::itemCopperCable, 0);
+	Item::addCreativeItem(CopperCableTile::tileCopperCable, 1);
+	//Item::addCreativeItem(CopperCableItem::itemCopperCable, 0);
+	//Item::addCreativeItem(InsulatedCopperCableItem::itemInsulatedCopperCable, 0);
 	LOGI("Creative items added");
 }
 
-static std::string (*_I18n$get)(std::string const&, std::vector<std::string, std::allocator<std::string>> const&);
-static std::string I18n$get(std::string const& key, std::vector<std::string, std::allocator<std::string>> const& a) {
-
+static std::string (*I18n_get_real)(std::string const&, std::vector<std::string, std::allocator<std::string>> const&);
+static std::string I18n_get_hook(std::string const& key, std::vector<std::string, std::allocator<std::string>> const& a) {
 	if(key == "item.copperCable.name") return "Copper Cable";
+	if(key == "item.insulatedCopperCable.name") return "Insulated Copper Cable";
 	if(key == "tile.tank.name") return "Tank";
 	if(key == "tile.generator.name") return "Generator";
+	if(key == "item.rebattery.name") return "RE Battery";
 	
-	return _I18n$get(key, a);
+	return I18n_get_real(key, a);
 }
 
 JNIEXPORT jint JNI_OnLoad(JavaVM* vm, void* reserved) {
-
-	MSHookFunction((void*) &TileTessellator::tessellateInWorld, (void*) &TileTessellator$tessellateInWorld, (void**) &_TileTessellator$tessellateInWorld);
-	MSHookFunction((void*) &Item::initItems, (void*) &Item$initItems, (void**) &_Item$initItems);
-	MSHookFunction((void*) &Tile::initTiles, (void*) &Tile$initTiles, (void**) &_Tile$initTiles);
-	MSHookFunction((void*) &Item::initCreativeItems, (void*) &Item$initCreativeItems, (void**) &_Item$initCreativeItems);
-	MSHookFunction((void*) &I18n::get, (void*) &I18n$get, (void**) &_I18n$get);
-
+	MSHookFunction((void*) &TileTessellator::tessellateInWorld, (void*) &TileTessellator_tessellateInWorld_hook, (void**) &TileTessellator_tessellateInWorld_real);
+	MSHookFunction((void*) &Item::initItems, (void*) &Item_initItems_hook, (void**) &Item_initItems_real);
+	MSHookFunction((void*) &Tile::initTiles, (void*) &Tile_initTiles_hook, (void**) &Tile_initTiles_real);
+	MSHookFunction((void*) &Item::initCreativeItems, (void*) &Item_initCreativeItems_hook, (void**) &Item_initCreativeItems_real);
+	MSHookFunction((void*) &I18n::get, (void*) &I18n_get_hook, (void**) &I18n_get_real);
+	
 	return JNI_VERSION_1_2;
 }

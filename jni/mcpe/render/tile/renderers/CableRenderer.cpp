@@ -4,20 +4,32 @@ void CableRenderer::render(const TilePos& pos, Tile* tile, TileTessellator* tess
 	int x = pos.x, y = pos.y, z = pos.z;
 	TileSource* ts = tess->region;
 	
-	bool insulated = tess->getData({x, y, z}) == 1;
+	bool insulated = ts->getTileAndData(x, y, z).data == 1;
 	
-	bool front = ts->getTile(x + 1, y, z) == tile->id;
-	bool back = ts->getTile(x - 1, y, z) == tile->id;
-	bool left = ts->getTile(x, y, z + 1) == tile->id;
-	bool right = ts->getTile(x, y, z - 1) == tile->id;
-	bool bottom = ts->getTile(x, y - 1, z) == tile->id;
-	bool top = ts->getTile(x, y + 1, z) == tile->id;
+	FullTile frontt = ts->getTileAndData(x + 1, y, z);
+	FullTile backt = ts->getTileAndData(x - 1, y, z);
+	FullTile leftt = ts->getTileAndData(x, y, z + 1);
+	FullTile rightt = ts->getTileAndData(x, y, z - 1);
+	FullTile bottomt = ts->getTileAndData(x, y - 1, z);
+	FullTile topt = ts->getTileAndData(x, y + 1, z);
+	
+	bool front = frontt.id == tile->id;
+	bool back = backt.id == tile->id;
+	bool left = leftt.id == tile->id;
+	bool right = rightt.id == tile->id;
+	bool bottom = bottomt.id == tile->id;
+	bool top = topt.id == tile->id;
 	
 	tess->useForcedUV = true;
 	tess->forcedUV = tile->getTexture(0, 0);
 	
 	tess->setRenderBounds(0.4, 0.4, 0.4, 0.6, 0.6, 0.6);
 	tess->tessellateBlockInWorld(tile, {x, y, z});
+	
+	if(insulated) {
+		tess->setRenderBounds(0.35, 0.35, 0.35, 0.65, 0.65, 0.65);
+		tess->tessellateBlockInWorld(tile, {x, y, z});
+	}
 	
 	if(front) {
 		tess->setRenderBounds(0.6, 0.4, 0.4, 1, 0.6, 0.6);
@@ -36,8 +48,13 @@ void CableRenderer::render(const TilePos& pos, Tile* tile, TileTessellator* tess
 	
 	if(right) {
 		if(insulated) {
-			tess->setRenderBounds(0.35, 0.35, 0.1, 0.65, 0.65, 0.4);
-			tess->tessellateBlockInWorld(tile, {x, y, z});
+			if(rightt.data == 1) {
+				tess->setRenderBounds(0.35, 0.35, 0, 0.65, 0.65, 0.4);
+				tess->tessellateBlockInWorld(tile, {x, y, z});
+			} else {
+				tess->setRenderBounds(0.35, 0.35, 0.1, 0.65, 0.65, 0.4);
+				tess->tessellateBlockInWorld(tile, {x, y, z});
+			}
 		}
 		tess->setRenderBounds(0.4, 0.4, 0, 0.6, 0.6, 0.4);
 		tess->tessellateBlockInWorld(tile, {x, y, z});
@@ -45,8 +62,10 @@ void CableRenderer::render(const TilePos& pos, Tile* tile, TileTessellator* tess
 	
 	if(bottom) {
 		if(insulated) {
-			tess->setRenderBounds(0.35, 0.1, 0.35, 0.65, 0.4, 0.65);
-			tess->tessellateBlockInWorld(tile, {x, y, z});
+			if(bottomt.data == 1) {
+				tess->setRenderBounds(0.35, 0.1, 0.35, 0.65, 0.4, 0.65);
+				tess->tessellateBlockInWorld(tile, {x, y, z});
+			}
 		}
 		tess->setRenderBounds(0.4, 0, 0.4, 0.6, 0.4, 0.6);
 		tess->tessellateBlockInWorld(tile, {x, y, z});

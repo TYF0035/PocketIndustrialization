@@ -9,6 +9,6 @@ CopperCableItem::CopperCableItem(int id) : Item(id - 256) {
 	setCategory(2);
 };
 
-bool CopperCableItem::useOn(ItemInstance *i, Player *player, int x, int y, int z, signed char sch1, float f1, float f2, float f3) {
+bool CopperCableItem::useOn(ItemInstance *i, Player *player, int x, int y, int z, signed char, float, float, float) {
 	i->count++;
 };

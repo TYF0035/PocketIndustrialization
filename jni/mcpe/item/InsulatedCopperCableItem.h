@@ -2,13 +2,13 @@
 #include "Item.h"
 #include "ItemInstance.h"
 
-class CopperCableItem: public Item {
+class InsulatedCopperCableItem: public Item {
 public:
 	static int _id;
-	static CopperCableItem* itemCopperCable;
+	static InsulatedCopperCableItem* itemInsulatedCopperCable;
 	
 public:
-	CopperCableItem(int);
+	InsulatedCopperCableItem(int);
 	
 	bool useOn(ItemInstance*, Player*, int, int, int, signed char, float, float, float);
 };
