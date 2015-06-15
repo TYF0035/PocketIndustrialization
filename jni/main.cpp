@@ -17,6 +17,7 @@
 #include <mcpe/tile/GeneratorTile.h>
 #include <mcpe/tile/TankTile.h>
 #include <mcpe/tile/CopperCableTile.h>
+#include <mcpe/tile/SilverCableTile.h>
 
 #include <mcpe/render/tile/renderers/TankRenderer.h>
 #include <mcpe/render/tile/renderers/CableRenderer.h>
@@ -35,6 +36,7 @@ static void TileTessellator_tessellateInWorld_hook(TileTessellator* self, Tile* 
 static void initRenderers() {	
 	RenderDispatcher::registerRenderer(TankTile::_id, new TankRenderer());
 	RenderDispatcher::registerRenderer(CopperCableTile::_id, new CableRenderer());
+         RenderDispatcher::registerRenderer(SilverCableTile::_id, new CableRenderer());
 }
 
 static void (*Tile_initTiles_real)();
@@ -44,6 +46,7 @@ static void Tile_initTiles_hook() {
 	GeneratorTile::tileGenerator = new GeneratorTile(GeneratorTile::_id);
 	TankTile::tileTank = new TankTile(TankTile::_id);
 	CopperCableTile::tileCopperCable = new CopperCableTile(CopperCableTile::_id);
+          SilverCableTile::tileSilverCable = new SilverCableTile(SilverCableTile::_id);
 	LOGI("Blocks added");
 
 	initRenderers();
@@ -67,6 +70,7 @@ static void Item_initCreativeItems_hook() {
 	Item::addCreativeItem(TankTile::tileTank, 0);
 	Item::addCreativeItem(CopperCableTile::tileCopperCable, 0);
 	Item::addCreativeItem(CopperCableTile::tileCopperCable, 1);
+        Item::addCreativeItem(SilverCableTile::tileSilverCable, 0);
 	//Item::addCreativeItem(CopperCableItem::itemCopperCable, 0);
 	//Item::addCreativeItem(InsulatedCopperCableItem::itemInsulatedCopperCable, 0);
 	LOGI("Creative items added");
