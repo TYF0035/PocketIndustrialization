@@ -12,6 +12,7 @@
 #include <mcpe/locale/I18n.h>
 
 #include <mcpe/item/CopperCableItem.h>
+#include <mcpe/item/SilverCableItem.h>
 #include <mcpe/item/InsulatedCopperCableItem.h>
 
 #include <mcpe/tile/GeneratorTile.h>
@@ -58,6 +59,7 @@ static void Item_initItems_hook() {
 	LOGI("Adding items");
 	CopperCableItem::itemCopperCable = new CopperCableItem(CopperCableItem::_id);
 	InsulatedCopperCableItem::itemInsulatedCopperCable = new InsulatedCopperCableItem(InsulatedCopperCableItem::_id);
+     SilverCableItem::itemSilverCable = new SilverCableItem(SilverCableItem::_id);
 	LOGI("Items added");
 }
 
@@ -83,7 +85,8 @@ static std::string I18n_get_hook(std::string const& key, std::vector<std::string
 	if(key == "tile.tank.name") return "Tank";
 	if(key == "tile.generator.name") return "Generator";
 	if(key == "item.rebattery.name") return "RE Battery";
-	
+        if(key == "item.silverCable.name") return "Silver Cable";
+	//if(key == "tile.metalPipe.name") return "Pipe";
 	return I18n_get_real(key, a);
 }
 
